@@ -67,10 +67,10 @@ class PreviewPicture extends  React.Component {
     console.log("should render picture");
     console.log("image url 2" + this.props.imageUrl);
     return (
-      <View>
+      <View style={styles.container}>
 
           <Image
-            style={{ width: width/3,height: width/3 }}
+            style={{ flex: 1, resizeMode: 'cover' }}
             source={{uri: this.props.imageUrl}}
           />
 
@@ -127,7 +127,7 @@ export default class Example extends React.Component {
   presentPhotos = (images) => {
     console.log("present photos is Called");
     console.log(images)
-    let imageUrl = images[1].node.image.uri;
+    let imageUrl = images[0].node.image.uri;
     console.log("imageUrl")
     console.log(imageUrl)
     this.setState({photoUrl: imageUrl, isPreview:true});
