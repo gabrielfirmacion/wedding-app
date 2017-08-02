@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Camera from 'react-native-camera';
 import * as firebase from 'firebase';
+import RNFetchBlob from 'react-native-fetch-blob'
 
 const styles = StyleSheet.create({
   container: {
@@ -69,15 +70,47 @@ const firebaseConfig = {
   apiKey: "AIzaSyBrtsK4m-Cwos38-5iXaeJDmfL722xGeRg",
   authDomain: "jugaweddingappsandbox.firebaseapp.com",
   databaseURL: "https://jugaweddingappsandbox.firebaseio.com/",
-  storageBucket: "gs://jugaweddingappsandbox.appspot.com/",,
+  storageBucket: "gs://jugaweddingappsandbox.appspot.com/",
 };
 const firebaseApp = firebase.initializeApp(firebaseConfig);
-
+// Prepare Blob support
+const Blob = RNFetchBlob.polyfill.Blob
+const fs = RNFetchBlob.fs
+window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+window.Blob = Blob
 
 class PreviewPicture extends  React.Component {
 
-  savePictureToFirebase = (image) => {
-    console.log("save picture to firebase");
+  // savePictureToFirebase = (image) => {
+  //   console.log("save picture to firebase");
+  // }
+
+  uploadImage = (uri, mime = 'application/octet-stream') => {
+    return new Promise((resolve, reject) => {
+      const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
+      let uploadBlob = null
+
+      const imageRef = firebaseApp.storage().ref('images').child('image_001')
+
+      fs.readFile(uploadUri, 'base64')
+        .then((data) => {
+          return Blob.build(data, { type: `${mime};BASE64` })
+        })
+        .then((blob) => {
+          uploadBlob = blob
+          return imageRef.put(blob, { contentType: mime })
+        })
+        .then(() => {
+          uploadBlob.close()
+          return imageRef.getDownloadURL()
+        })
+        .then((url) => {
+          resolve(url)
+        })
+        .catch((error) => {
+          reject(error)
+      })
+    })
   }
 
   render() {
@@ -93,7 +126,7 @@ class PreviewPicture extends  React.Component {
           <View style={[styles.overlay, styles.bottomOverlay]}>
             <TouchableOpacity
                 style={styles.captureButton}
-                onPress={this.savePictureToFirebase}
+                onPress={this.uploadImage(this.props.imageUrl)}
             >
               <Image
                   source={require('./assets/send_button.png')}
