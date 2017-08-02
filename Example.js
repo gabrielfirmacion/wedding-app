@@ -63,6 +63,11 @@ const styles = StyleSheet.create({
 // <Text>IMAGE HERE</Text>
 const { width } = Dimensions.get('window')
 class PreviewPicture extends  React.Component {
+
+  savePictureToFirebase = (image) => {
+    console.log("save picture to firebase");
+  }
+
   render() {
     console.log("should render picture");
     console.log("image url 2" + this.props.imageUrl);
@@ -73,6 +78,16 @@ class PreviewPicture extends  React.Component {
             style={{ flex: 1, resizeMode: 'cover' }}
             source={{uri: this.props.imageUrl}}
           />
+          <View style={[styles.overlay, styles.bottomOverlay]}>
+            <TouchableOpacity
+                style={styles.captureButton}
+                onPress={this.savePictureToFirebase}
+            >
+              <Image
+                  source={require('./assets/send_button.png')}
+              />
+            </TouchableOpacity>
+          </View>
 
       </View>
     );
