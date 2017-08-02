@@ -10,6 +10,7 @@ import {
   Dimensions
 } from 'react-native';
 import Camera from 'react-native-camera';
+import * as firebase from 'firebase';
 
 const styles = StyleSheet.create({
   container: {
@@ -62,6 +63,17 @@ const styles = StyleSheet.create({
 });
 // <Text>IMAGE HERE</Text>
 const { width } = Dimensions.get('window')
+
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBrtsK4m-Cwos38-5iXaeJDmfL722xGeRg",
+  authDomain: "jugaweddingappsandbox.firebaseapp.com",
+  databaseURL: "https://jugaweddingappsandbox.firebaseio.com/",
+  storageBucket: "gs://jugaweddingappsandbox.appspot.com/",,
+};
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+
+
 class PreviewPicture extends  React.Component {
 
   savePictureToFirebase = (image) => {
